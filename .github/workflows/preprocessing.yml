@@ -1,0 +1,31 @@
+name: Automated Preprocessing
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  preprocess:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: 3.12.7
+
+      - name: Install dependencies
+        run: pip install pandas scikit-learn
+
+      - name: Run preprocessing
+        run: python preprocessing/automate_Galih_Muhammad_Jaknanihan.py
+
+      - name: Commit result
+        run: |
+          git config --global user.name "github-actions"
+          git config --global user.email "github-actions@github.com"
+          git add preprocessing/Loan_Eligibility_preprocessing.csv
+          git commit -m "Update preprocessed dataset" || echo "No changes"
+          git push
