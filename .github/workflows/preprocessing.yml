@@ -1,4 +1,4 @@
-name: Automated Preprocessing
+name: Automated Preprocessing with Artifact
 
 on:
   push:
@@ -10,22 +10,32 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-      - uses: actions/setup-python@v5
+      - name: Setup Python
+        uses: actions/setup-python@v5
         with:
           python-version: 3.12.7
 
       - name: Install dependencies
-        run: pip install pandas scikit-learn
+        run: |
+          pip install pandas scikit-learn
 
       - name: Run preprocessing
-        run: python preprocessing/automate_Galih_Muhammad_Jaknanihan.py
+        run: |
+          python preprocessing/automate_Galih_Muhammad_Jaknanihan.py
 
-      - name: Commit result
+      - name: Upload preprocessing artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Loan-Eligibility-Preprocessed-Dataset
+          path: preprocessing/Loan_Eligibility_preprocessing.csv
+
+      - name: Commit preprocessing result
         run: |
           git config --global user.name "github-actions"
           git config --global user.email "github-actions@github.com"
           git add preprocessing/Loan_Eligibility_preprocessing.csv
-          git commit -m "Update preprocessed dataset" || echo "No changes"
+          git commit -m "Update preprocessed dataset via workflow" || echo "No changes"
           git push
